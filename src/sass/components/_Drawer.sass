@@ -1,0 +1,48 @@
+$drawerWidth: 300px
+
+  
+  
+.Drawer
+  position: fixed
+  top: 50px
+  left: 0
+  bottom: 0
+  width: $drawerWidth
+  height: calc(100% - 50px)
+  background: $darker
+  display: block
+  overflow-y: scroll
+  overflow-x: hidden
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)
+  &-item
+    height: 34px
+    padding: 0 16px
+    display: flex
+    justify-content: space-between
+    align-items: center
+    +lessThan(920px)
+      height: 42px
+      padding: 0 16px
+    user-select: none
+    &:hover
+      background: lighten($darker, 7.5%)
+    &--active
+      border-right: 2px solid white
+      background: lighten($darker, 10%)
+      &:hover
+        background: lighten($darker, 10%)
+  &-tabs
+    padding-right: 16px 
+    overflow: hidden
+    overflow-x: scroll
+    display: flex
+    color: lighten($darker, 30%)
+    box-shadow: -15px 0 15px -15px inset
+    &-item
+      padding: 8px 16px
+      padding-right: 0
+      cursor: default
+      &--active
+        color: lighten($darker, 90%)
+    +moreThan(920px)
+      display: none

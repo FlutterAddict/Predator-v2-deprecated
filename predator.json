@@ -1,0 +1,22 @@
+{
+  "title": "Predator",
+  "github": "https://github.com/FlutterAddict/Predator",
+  "themeColor": "#090B10",
+  "tabs": {
+    "DOCS": {
+      "Home": [
+        { "path": "setup/setup", "label": "Setup" }
+      ]
+    },
+    "ABOUT": {
+      "About": [
+        { "path": "about/about", "label": "About" }
+      ]
+    },
+    "EXAMPLE": {
+      "Example": [
+        { "path": "example/example", "label": "Example" }
+      ]
+    }
+  }
+}

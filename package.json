@@ -1,0 +1,11 @@
+{
+  "name": "predator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/js/app.js",
+  "scripts": {
+    "watch": "rollup src/js/app.js --file build/js/app.js --format iife --watch --sourcemap"
+  },
+  "author": "FlutterAddict / JohnnyDevX",
+  "license": "ISC"
+}

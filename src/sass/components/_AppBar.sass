@@ -1,0 +1,56 @@
+.AppBar
+  user-select: none
+  background: $darker
+  width: 100%
+  height: 50px
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  display: flex
+  align-items: center
+  justify-content: space-between
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)
+  &-part
+    display: flex
+    align-items: center 
+  &-logo
+    font-size: 24px
+    margin: 8px
+    +lessThan(920px)
+      display: none
+  &-burger
+    font-size: 24px
+    padding: 8px
+    display: none
+    &:hover
+      cursor: pointer
+    +lessThan(920px)
+      display: block
+  &-tab
+    padding: 8px
+    color: lighten($darker, 45%)
+    border-radius: 8px
+    &:hover
+      background: lighten($darker, 15%)
+    &--active
+      color: lighten($darker, 90%)
+    +lessThan(920px)
+      display: none
+  &-title
+    font-size: 24px
+    margin: 8px
+  &-item
+    color: lighten($darker, 20%)
+    margin-right: 8px
+  &-search
+    width: 240px
+    background: lighten($darker, 5%)
+    margin-right: 8px
+    color: #FFF
+    padding: 8px
+    font-size: 16px
+    border: 0
+    outline: 0
+    +lessThan(640px)
+      display: none
