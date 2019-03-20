@@ -5,13 +5,20 @@
   "tabs": {
     "DOCS": {
       "Home": [
-        { "path": "setup/setup", "label": "Setup" }
+        { "path": "setup/setup", "label": "Setup I" },
+        { "path": "setup/setup", "label": "Setup II" },
+        { "path": "setup/setup", "label": "Setup III" }
       ]
     },
     "ABOUT": {
-      "About": [
-        { "path": "about/about", "label": "About" }
-      ]
+      "About": {
+        "About 1": [
+          { "path": "about/about", "label": "About" }
+        ],
+        "About 2": [
+          { "path": "about/about", "label": "About" }
+        ] 
+      }
     },
     "EXAMPLE": {
       "Example": [

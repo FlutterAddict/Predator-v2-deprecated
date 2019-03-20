@@ -1,9 +1,10 @@
-import Accordion from './Accordion';
+import Accordion from './Accordion/Accordion';
 
 
 
 class Drawer {
-  constructor() {
+  constructor(config) {
+    this.loadContent = config.contentLoader;
     this.content = [];
     this.outer = document.querySelector('.js-drawer');
     this.inner = document.querySelector('.js-drawer-inner');
@@ -23,10 +24,20 @@ class Drawer {
   }
 
   populate(content) {
-    // Top-level of tab's content is always an object, where Predator transforms each key into an accordion.
     this.inner.innerHTML = '';
-    this.content = Object.keys(content).map(key => new Accordion(key, content[key], 1));
+    this.content = Object.keys(content).map(
+      key => new Accordion(key, content[key], (itemElement) => this.handleItemClick(itemElement), 1)
+    );
     this.content.forEach(item => this.inner.appendChild(item.element.accordion));
+  }
+
+  handleItemClick(itemElement) {
+    this.content.forEach(item => {
+      item.items.forEach(itm => itm.element.classList.remove('Drawer-item--active'));
+      item.nestedAccordions.forEach(acc => acc.items.forEach(i => i.element.classList.remove('Drawer-item--active')));
+    });
+    itemElement.classList.add('Drawer-item--active');
+    this.loadContent(itemElement.dataset.contentKey);
   }
 }
 

@@ -1,4 +1,4 @@
-const get = (key, target, placeholderHTML='', callback) => {
+const getHTML = (key, target, placeholderHTML='', callback) => {
   target.innerHTML = placeholderHTML;
   let request = new XMLHttpRequest();
   request.onreadystatechange = () => {
@@ -14,3 +14,7 @@ const get = (key, target, placeholderHTML='', callback) => {
   request.open('GET', key);
   request.send();
 };
+
+
+
+export default getHTML;

@@ -1,3 +1,7 @@
+import getHTML from '../../ajax/getHTML';
+
+
+
 class Content {
   constructor(config) {
     this.onContentClick = config.onContentClick;
@@ -9,6 +13,13 @@ class Content {
     this.container = document.querySelector('.js-content-container');
     this.parent = document.querySelector('.js-content-parent');
     this.bindEventHandlers();
+  }
+
+  load(key) {
+    getHTML(`docs/${key}.html`, this.container, '', () => {
+      Prism.highlightAll();
+      // setParagraphsColor();
+    });
   }
 
   bindEventHandlers() {

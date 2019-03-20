@@ -37,43 +37,56 @@
     }
   }
 
-  class Accordion {
-    constructor(name, content, nestLevel) {
+  class Item {
+    constructor(item, nestLevel, handleClick) {
       this.availableTags = ['app', 'game', 'program'];
+      this.element = this.build(item, nestLevel, handleClick);
+    }
 
-      // name is a key of one of the top-level objects for neccessary top-level accordions
-      // content is a value of this key and it can be either next object for nested accordion
-      // or it can be an array with items to fill the accordion with 
-      this.name = name;   
-      this.content = content;
-      this.nestLevel = nestLevel;
+    build(item, nestLevel, handleClick) {
+      let div = document.createElement('div');
+      div.classList.add('Drawer-item', `Accordion-child-${nestLevel}`, 'js-drawer-item');
+      item.active && div.classList.add('Drawer-item--active');
+      div.setAttribute('data-content-key', item.path);
+      div.innerText = `• ${item.label}`;
+      if (item.tags) {
+        item.tags.forEach(tagName => {
+          if (this.availableTags.indexOf(tagName) >= 0) {
+            let tag = document.createElement('div');
+            tag.classList.add('Tag', `Tag--${tagName}`);
+            tag.innerText = tagName;
+            div.appendChild(tag);
+          }
+        });
+      }
+      div.addEventListener('click', () => handleClick(div));
+      return div;
+    }
+  }
 
-      // either way, we need to build the accordion head and empty body first:
-      this.element = this.build(); // element.body for injecting items, element.accordion for appending it
-
-      // figure out if the content is an object or array now
-      if (Array.isArray(this.content)) {
-        this.fillWithItems();
+  class Accordion {
+    constructor(name, content, handleClick, nestLevel) {
+      this.items = [];
+      this.nestedAccordions = [];
+      this.element = this.build(name, nestLevel);
+      if (Array.isArray(content)) {
+        this.fillWithItems(content, handleClick, nestLevel);
       } else {
-        this.fillWithNestedAccordions();
+        this.fillWithNestedAccordions(content, handleClick);
       }
     }
 
-    // 1. Do this fully dynamic
-    // 2. use build() method for nested accordions. You'll need to pass parameters for that. instead of getting values from props.
-    // 3. Make AccordionItem class
-
-    build() {
+    build(name, nestLevel) {
       let accordion = document.createElement('div');
       accordion.classList.add('Accordion');
       let head = document.createElement('div');
-      head.classList.add('Accordion-head', `Accordion-head--${this.nestLevel}`);
+      head.classList.add('Accordion-head', `Accordion-head--${nestLevel}`);
       head.addEventListener('click', this.handleClick);
       let body = document.createElement('div');
       body.classList.add('Accordion-body');
       accordion.appendChild(head);
       accordion.appendChild(body);
-      head.innerText = this.name;
+      head.innerText = name;
       let icon = document.createElement('ion-icon');
       icon.classList.add('js-drop-icon');
       icon.setAttribute('name', 'arrow-dropup');
@@ -92,36 +105,20 @@
       body.style.display = display;
     }
 
-    fillWithItems() {
-      this.content.forEach(item => {
-        let div = document.createElement('div');
-        div.classList.add('Drawer-item', `Accordion-child-${this.nestLevel}`, 'js-drawer-item');
-        if (item.active) { div.classList.add('Drawer-item--active'); }      div.setAttribute('data-content-key', item.key);
-        div.innerText = `• ${item.label}`;
-        if (item.tags) {
-          item.tags.forEach(tagName => {
-            if (this.tagsAvailable.indexOf(tagName) >= 0) {
-              let tag = document.createElement('div');
-              tag.classList.add('Tag', `Tag--${tagName}`);
-              tag.innerText = tagName;
-              div.appendChild(tag);
-            }
-          });
-        }
-        // div.addEventListener('click', () => onDrawerItemClick(div));
-        this.element.body.appendChild(div); 
-      });
+    fillWithItems(content, handleClick, nestLevel) {
+      this.items = content.map(item => new Item(item, nestLevel, (itm) => handleClick(itm)));
+      this.items.forEach(item => this.element.body.appendChild(item.element));
     }
-
-    fillWithNestedAccordions() {
-      Object.keys(this.content).forEach(key => {
-
-      });
+    
+    fillWithNestedAccordions(content, handleClick) {
+      this.nestedAccordions = Object.keys(content).map(key => new Accordion(key, content[key], handleClick, 2));
+      this.nestedAccordions.forEach(acc => this.element.body.appendChild(acc.element.accordion));
     }
   }
 
   class Drawer {
-    constructor() {
+    constructor(config) {
+      this.loadContent = config.contentLoader;
       this.content = [];
       this.outer = document.querySelector('.js-drawer');
       this.inner = document.querySelector('.js-drawer-inner');
@@ -141,10 +138,20 @@
     }
 
     populate(content) {
-      // Top-level of tab's content is always an object, where Predator transforms each key into an accordion.
       this.inner.innerHTML = '';
-      this.content = Object.keys(content).map(key => new Accordion(key, content[key], 1));
+      this.content = Object.keys(content).map(
+        key => new Accordion(key, content[key], (itemElement) => this.handleItemClick(itemElement), 1)
+      );
       this.content.forEach(item => this.inner.appendChild(item.element.accordion));
+    }
+
+    handleItemClick(itemElement) {
+      this.content.forEach(item => {
+        item.items.forEach(itm => itm.element.classList.remove('Drawer-item--active'));
+        item.nestedAccordions.forEach(acc => acc.items.forEach(i => i.element.classList.remove('Drawer-item--active')));
+      });
+      itemElement.classList.add('Drawer-item--active');
+      this.loadContent(itemElement.dataset.contentKey);
     }
   }
 
@@ -180,6 +187,20 @@
     }
   }
 
+  const getHTML = (key, target, placeholderHTML='', callback) => {
+    target.innerHTML = placeholderHTML;
+    let request = new XMLHttpRequest();
+    request.onreadystatechange = () => {
+      if (request.readyState === 4) {
+        if (request.status === 200) {
+          target.innerHTML = request.responseText;
+          if (callback) {
+            callback();
+          }      }    }  };
+    request.open('GET', key);
+    request.send();
+  };
+
   class Content {
     constructor(config) {
       this.onContentClick = config.onContentClick;
@@ -191,6 +212,13 @@
       this.container = document.querySelector('.js-content-container');
       this.parent = document.querySelector('.js-content-parent');
       this.bindEventHandlers();
+    }
+
+    load(key) {
+      getHTML(`docs/${key}.html`, this.container, '', () => {
+        Prism.highlightAll();
+        // setParagraphsColor();
+      });
     }
 
     bindEventHandlers() {
@@ -214,10 +242,12 @@
   class App {
     constructor(config) {
       this.appBar = new AppBar();
-      this.drawer = new Drawer();
       this.content = new Content({ 
         onContentClick: () => this.drawer.visible = document.body.clientWidth > 920
       });
+      this.drawer = new Drawer({
+        contentLoader: (key) => this.content.load(key)
+      });    
       this.tabs = [];
       this.init(config);
     }
@@ -237,13 +267,29 @@
         this.appBar.left.appendChild(tab.forAppBar);
         this.drawer.tabs.appendChild(tab.forDrawer);
       });
-      this.drawer.populate(this.tabs[0].content);
+      this.handleTabPress(1);
     }
 
     handleTabPress(index) {
       this.tabs.forEach(tab => tab.deactivate());
       this.tabs[index].activate();
+      let content = this.tabs[index].content;
       this.drawer.populate(this.tabs[index].content);
+
+      // load first drawer item
+      let firstAccordionContent = content[Object.keys(content)[0]];
+      let firstItem = Array.isArray(firstAccordionContent) ? 
+        firstAccordionContent[0] : 
+        firstAccordionContent[Object.keys(firstAccordionContent)[0]][0];
+      this.content.load(firstItem.path);
+
+      // make first drawer item active
+      console.log(this.drawer.content[0]);
+      if (this.drawer.content[0].items.length > 0) {
+        this.drawer.content[0].items[0].element.classList.add('Drawer-item--active');
+      } else {
+        this.drawer.content[0].nestedAccordions[0].items[0].element.classList.add('Drawer-item--active');
+      }
     }
 
     changeMeta(name, content) {
