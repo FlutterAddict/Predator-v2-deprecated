@@ -32,12 +32,37 @@ class Drawer {
   }
 
   handleItemClick(itemElement) {
-    this.content.forEach(item => {
-      item.items.forEach(itm => itm.element.classList.remove('Drawer-item--active'));
-      item.nestedAccordions.forEach(acc => acc.items.forEach(i => i.element.classList.remove('Drawer-item--active')));
-    });
-    itemElement.classList.add('Drawer-item--active');
+    this.deactivateAllItems();
+    this.activateItem(itemElement);
     this.loadContent(itemElement.dataset.contentKey);
+  }
+
+  deactivateAllItems() {
+    this.content.forEach(item => {
+      item.items.forEach(itm => this.deactivateItem(itm.element));
+      item.nestedAccordions.forEach(acc => acc.items.forEach(i => this.deactivateItem(i.element)));
+    });
+  }
+
+  activateItem(item) {
+    item.classList.add('Drawer-item--active');
+  }
+
+  deactivateItem(item) {
+    item.classList.remove('Drawer-item--active');
+  }
+
+  activateFirst() {
+    let firstAccordion = this.content[0];
+    if (firstAccordion.items.length) {
+      let firstItem = firstAccordion.items[0];
+      firstItem.element.classList.add('Drawer-item--active');
+      this.loadContent(firstItem.element.dataset.contentKey);
+    } else if (firstAccordion.nestedAccordions) {
+      let firstItem = firstAccordion.nestedAccordions[0].items[0];
+      firstItem.element.classList.add('Drawer-item--active');
+      this.loadContent(firstItem.element.dataset.contentKey);
+    }
   }
 }
 

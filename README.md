@@ -20,6 +20,7 @@ Documentation website (single page web app) generator.
 - PrismJS for code highlighting
 
 ## To-do:
+- [ ] Don't reload the same page
 - [ ] Fully dynamic
 - [ ] Better tooltips
 - [ ] support more languages to highlight with Prism

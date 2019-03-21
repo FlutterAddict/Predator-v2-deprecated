@@ -4,20 +4,15 @@
   "themeColor": "#090B10",
   "tabs": {
     "DOCS": {
-      "Home": [
-        { "path": "setup/setup", "label": "Setup I" },
-        { "path": "setup/setup", "label": "Setup II" },
-        { "path": "setup/setup", "label": "Setup III" }
-      ]
-    },
-    "ABOUT": {
-      "About": {
-        "About 1": [
-          { "path": "about/about", "label": "About" }
+      "Home": {
+        "Nested 1": [
+          { "path": "setup/setup", "label": "Setup I" },
+          { "path": "setup/setup2", "label": "Setup II" }
         ],
-        "About 2": [
-          { "path": "about/about", "label": "About" }
-        ] 
+        "Nested 2": [
+          { "path": "setup/setup", "label": "Setup I" },
+          { "path": "setup/setup2", "label": "Setup II" }
+        ]
       }
     },
     "EXAMPLE": {

@@ -146,12 +146,37 @@
     }
 
     handleItemClick(itemElement) {
-      this.content.forEach(item => {
-        item.items.forEach(itm => itm.element.classList.remove('Drawer-item--active'));
-        item.nestedAccordions.forEach(acc => acc.items.forEach(i => i.element.classList.remove('Drawer-item--active')));
-      });
-      itemElement.classList.add('Drawer-item--active');
+      this.deactivateAllItems();
+      this.activateItem(itemElement);
       this.loadContent(itemElement.dataset.contentKey);
+    }
+
+    deactivateAllItems() {
+      this.content.forEach(item => {
+        item.items.forEach(itm => this.deactivateItem(itm.element));
+        item.nestedAccordions.forEach(acc => acc.items.forEach(i => this.deactivateItem(i.element)));
+      });
+    }
+
+    activateItem(item) {
+      item.classList.add('Drawer-item--active');
+    }
+
+    deactivateItem(item) {
+      item.classList.remove('Drawer-item--active');
+    }
+
+    activateFirst() {
+      let firstAccordion = this.content[0];
+      if (firstAccordion.items.length) {
+        let firstItem = firstAccordion.items[0];
+        firstItem.element.classList.add('Drawer-item--active');
+        this.loadContent(firstItem.element.dataset.contentKey);
+      } else if (firstAccordion.nestedAccordions) {
+        let firstItem = firstAccordion.nestedAccordions[0].items[0];
+        firstItem.element.classList.add('Drawer-item--active');
+        this.loadContent(firstItem.element.dataset.contentKey);
+      }
     }
   }
 
@@ -241,14 +266,15 @@
 
   class App {
     constructor(config) {
+      this.tabs = [];
       this.appBar = new AppBar();
+      this.drawer = new Drawer({
+        contentLoader: (key) => this.content.load(key)
+      });      
       this.content = new Content({ 
         onContentClick: () => this.drawer.visible = document.body.clientWidth > 920
       });
-      this.drawer = new Drawer({
-        contentLoader: (key) => this.content.load(key)
-      });    
-      this.tabs = [];
+    
       this.init(config);
     }
 
@@ -267,7 +293,7 @@
         this.appBar.left.appendChild(tab.forAppBar);
         this.drawer.tabs.appendChild(tab.forDrawer);
       });
-      this.handleTabPress(1);
+      this.handleTabPress(0);
     }
 
     handleTabPress(index) {
@@ -275,21 +301,7 @@
       this.tabs[index].activate();
       let content = this.tabs[index].content;
       this.drawer.populate(this.tabs[index].content);
-
-      // load first drawer item
-      let firstAccordionContent = content[Object.keys(content)[0]];
-      let firstItem = Array.isArray(firstAccordionContent) ? 
-        firstAccordionContent[0] : 
-        firstAccordionContent[Object.keys(firstAccordionContent)[0]][0];
-      this.content.load(firstItem.path);
-
-      // make first drawer item active
-      console.log(this.drawer.content[0]);
-      if (this.drawer.content[0].items.length > 0) {
-        this.drawer.content[0].items[0].element.classList.add('Drawer-item--active');
-      } else {
-        this.drawer.content[0].nestedAccordions[0].items[0].element.classList.add('Drawer-item--active');
-      }
+      this.drawer.activateFirst();
     }
 
     changeMeta(name, content) {
