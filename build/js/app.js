@@ -131,6 +131,7 @@
       this.getDOM();
       this.bindEventHandlers();
       this.content = [];
+      this.activeItemKey = '';
       this.loadContent = config.contentLoader;
       this.visible = document.body.clientWidth > 920;
     }
@@ -164,10 +165,13 @@
     }
 
     handleItemClick(itemElement) {
-      this.deactivateAllItems();
-      this.activateItem(itemElement);
-      this.loadContent(itemElement.dataset.contentKey);
-      this.visible = document.body.clientWidth > 920;
+      if (itemElement.dataset.contentKey != this.activeItemKey) {
+        this.deactivateAllItems();
+        this.activateItem(itemElement);
+        this.loadContent(itemElement.dataset.contentKey);
+        this.activeItemKey = itemElement.dataset.contentKey;
+        this.visible = document.body.clientWidth > 920;      
+      }
     }
 
     deactivateAllItems() {
@@ -190,9 +194,11 @@
       if (firstAccordion.items.length) { // firstAccordion.containsItems
         this.activateItem(firstAccordion.items[0].element); 
         this.loadContent(firstAccordion.items[0].element.dataset.contentKey);
+        this.activeItemKey = firstAccordion.items[0].element.dataset.contentKey;
       } else if (firstAccordion.nestedAccordions.length) { // firstAccordion.containsAccordions
         this.activateItem(firstAccordion.nestedAccordions[0].items[0].element);
         this.loadContent(firstAccordion.nestedAccordions[0].items[0].element.dataset.contentKey);
+        this.activeItemKey = firstAccordion.nestedAccordions[0].items[0].element.dataset.contentKey;
       }
     }
 
@@ -288,6 +294,7 @@
   class App {
     constructor(config) {
       this.tabs = [];
+      this.activeTabIndex = -1;
       this.appBar = new AppBar();
       this.drawer = new Drawer({
         contentLoader: (key) => this.content.load(key)
@@ -318,11 +325,14 @@
     }
 
     handleTabPress(index) {
-      this.tabs.forEach(tab => tab.deactivate());
-      this.tabs[index].activate();
-      this.drawer.clear();
-      this.drawer.populate(this.tabs[index].content);
-      this.drawer.activateFirst();
+      if (index != this.activeTabIndex) {
+        this.activeTabIndex = index;
+        this.tabs.forEach(tab => tab.deactivate());
+        this.tabs[index].activate();
+        this.drawer.clear();
+        this.drawer.populate(this.tabs[index].content);
+        this.drawer.activateFirst();      
+      }
     }
 
     changeMetaTag(name, content) {

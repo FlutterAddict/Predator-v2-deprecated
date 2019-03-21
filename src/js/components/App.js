@@ -8,6 +8,7 @@ import Content from './Content/Content';
 class App {
   constructor(config) {
     this.tabs = [];
+    this.activeTabIndex = -1;
     this.appBar = new AppBar();
     this.drawer = new Drawer({
       contentLoader: (key) => this.content.load(key)
@@ -38,11 +39,14 @@ class App {
   }
 
   handleTabPress(index) {
-    this.tabs.forEach(tab => tab.deactivate());
-    this.tabs[index].activate();
-    this.drawer.clear();
-    this.drawer.populate(this.tabs[index].content);
-    this.drawer.activateFirst();
+    if (index != this.activeTabIndex) {
+      this.activeTabIndex = index;
+      this.tabs.forEach(tab => tab.deactivate());
+      this.tabs[index].activate();
+      this.drawer.clear();
+      this.drawer.populate(this.tabs[index].content);
+      this.drawer.activateFirst();      
+    }
   }
 
   changeMetaTag(name, content) {

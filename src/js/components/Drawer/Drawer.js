@@ -7,6 +7,7 @@ class Drawer {
     this.getDOM();
     this.bindEventHandlers();
     this.content = [];
+    this.activeItemKey = '';
     this.loadContent = config.contentLoader;
     this.visible = document.body.clientWidth > 920;
   }
@@ -40,10 +41,13 @@ class Drawer {
   }
 
   handleItemClick(itemElement) {
-    this.deactivateAllItems();
-    this.activateItem(itemElement);
-    this.loadContent(itemElement.dataset.contentKey);
-    this.visible = document.body.clientWidth > 920;
+    if (itemElement.dataset.contentKey != this.activeItemKey) {
+      this.deactivateAllItems();
+      this.activateItem(itemElement);
+      this.loadContent(itemElement.dataset.contentKey);
+      this.activeItemKey = itemElement.dataset.contentKey;
+      this.visible = document.body.clientWidth > 920;      
+    }
   }
 
   deactivateAllItems() {
@@ -66,9 +70,11 @@ class Drawer {
     if (firstAccordion.items.length) { // firstAccordion.containsItems
       this.activateItem(firstAccordion.items[0].element); 
       this.loadContent(firstAccordion.items[0].element.dataset.contentKey);
+      this.activeItemKey = firstAccordion.items[0].element.dataset.contentKey;
     } else if (firstAccordion.nestedAccordions.length) { // firstAccordion.containsAccordions
       this.activateItem(firstAccordion.nestedAccordions[0].items[0].element);
       this.loadContent(firstAccordion.nestedAccordions[0].items[0].element.dataset.contentKey);
+      this.activeItemKey = firstAccordion.nestedAccordions[0].items[0].element.dataset.contentKey;
     }
   }
 
