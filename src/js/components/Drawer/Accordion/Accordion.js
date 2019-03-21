@@ -3,14 +3,14 @@ import Item from './Item';
 
 
 class Accordion {
-  constructor(name, content, handleClick, nestLevel) {
+  constructor({ name, content, itemClickHandler, nestLevel }) {
     this.items = [];
     this.nestedAccordions = [];
     this.element = this.build(name, nestLevel);
     if (Array.isArray(content)) {
-      this.fillWithItems(content, handleClick, nestLevel);
+      this.fillWithItems(content, itemClickHandler, nestLevel);
     } else {
-      this.fillWithNestedAccordions(content, handleClick);
+      this.fillWithNestedAccordions(content, itemClickHandler);
     }
   }
 
@@ -49,7 +49,14 @@ class Accordion {
   }
   
   fillWithNestedAccordions(content, handleClick) {
-    this.nestedAccordions = Object.keys(content).map(key => new Accordion(key, content[key], handleClick, 2));
+    this.nestedAccordions = Object.keys(content).map(
+      key => new Accordion({
+        name: key,
+        content: content[key],
+        itemClickHandler: handleClick,
+        nestLevel: 2
+      })
+    );
     this.nestedAccordions.forEach(acc => this.element.body.appendChild(acc.element.accordion));
   }
 }

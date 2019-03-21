@@ -23,7 +23,7 @@ class App {
     this.appBar.titleText = config.title;
     config.hasOwnProperty('github') && this.appBar.addGithubRedirector(config.github);
     document.title = config.title;
-    this.changeMeta('theme-color', config.themeColor);   
+    this.changeMetaTag('theme-color', config.themeColor);   
     this.injectTabs(config.tabs);
   }
 
@@ -40,12 +40,12 @@ class App {
   handleTabPress(index) {
     this.tabs.forEach(tab => tab.deactivate());
     this.tabs[index].activate();
-    let content = this.tabs[index].content;
+    this.drawer.clear();
     this.drawer.populate(this.tabs[index].content);
     this.drawer.activateFirst();
   }
 
-  changeMeta(name, content) {
+  changeMetaTag(name, content) {
     document.querySelector(`meta[name="${name}"]`).setAttribute('content', content);
   }
 }

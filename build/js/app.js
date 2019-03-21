@@ -37,9 +37,12 @@
     }
   }
 
+  const availableTags = ['app', 'game', 'program'];
+
+
+
   class Item {
     constructor(item, nestLevel, handleClick) {
-      this.availableTags = ['app', 'game', 'program'];
       this.element = this.build(item, nestLevel, handleClick);
     }
 
@@ -51,7 +54,7 @@
       div.innerText = `• ${item.label}`;
       if (item.tags) {
         item.tags.forEach(tagName => {
-          if (this.availableTags.indexOf(tagName) >= 0) {
+          if (availableTags.indexOf(tagName) >= 0) {
             let tag = document.createElement('div');
             tag.classList.add('Tag', `Tag--${tagName}`);
             tag.innerText = tagName;
@@ -65,14 +68,14 @@
   }
 
   class Accordion {
-    constructor(name, content, handleClick, nestLevel) {
+    constructor({ name, content, itemClickHandler, nestLevel }) {
       this.items = [];
       this.nestedAccordions = [];
       this.element = this.build(name, nestLevel);
       if (Array.isArray(content)) {
-        this.fillWithItems(content, handleClick, nestLevel);
+        this.fillWithItems(content, itemClickHandler, nestLevel);
       } else {
-        this.fillWithNestedAccordions(content, handleClick);
+        this.fillWithNestedAccordions(content, itemClickHandler);
       }
     }
 
@@ -111,25 +114,36 @@
     }
     
     fillWithNestedAccordions(content, handleClick) {
-      this.nestedAccordions = Object.keys(content).map(key => new Accordion(key, content[key], handleClick, 2));
+      this.nestedAccordions = Object.keys(content).map(
+        key => new Accordion({
+          name: key,
+          content: content[key],
+          itemClickHandler: handleClick,
+          nestLevel: 2
+        })
+      );
       this.nestedAccordions.forEach(acc => this.element.body.appendChild(acc.element.accordion));
     }
   }
 
   class Drawer {
     constructor(config) {
-      this.loadContent = config.contentLoader;
-      this.content = [];
-      this.outer = document.querySelector('.js-drawer');
-      this.inner = document.querySelector('.js-drawer-inner');
-      this.toggler = document.querySelector('.js-burger');
-      this.tabs = document.querySelector('.js-drawer-tabs');
-      this.visible = document.body.clientWidth > 920;
+      this.getDOM();
       this.bindEventHandlers();
+      this.content = [];
+      this.loadContent = config.contentLoader;
+      this.visible = document.body.clientWidth > 920;
     }
 
     set visible(visibility) {
       this.outer.style.display = visibility ? 'block' : 'none';
+    }  
+
+    getDOM() {
+      this.outer = document.querySelector('.js-drawer');
+      this.inner = document.querySelector('.js-drawer-inner');
+      this.toggler = document.querySelector('.js-burger');
+      this.tabs = document.querySelector('.js-drawer-tabs');    
     }
 
     bindEventHandlers() {
@@ -138,9 +152,13 @@
     }
 
     populate(content) {
-      this.inner.innerHTML = '';
       this.content = Object.keys(content).map(
-        key => new Accordion(key, content[key], (itemElement) => this.handleItemClick(itemElement), 1)
+        key => new Accordion({
+          name: key,
+          content: content[key],
+          itemClickHandler: itemElement => this.handleItemClick(itemElement),
+          nestLevel: 1
+        })
       );
       this.content.forEach(item => this.inner.appendChild(item.element.accordion));
     }
@@ -168,15 +186,17 @@
 
     activateFirst() {
       let firstAccordion = this.content[0];
-      if (firstAccordion.items.length) {
-        let firstItem = firstAccordion.items[0];
-        firstItem.element.classList.add('Drawer-item--active');
-        this.loadContent(firstItem.element.dataset.contentKey);
-      } else if (firstAccordion.nestedAccordions) {
-        let firstItem = firstAccordion.nestedAccordions[0].items[0];
-        firstItem.element.classList.add('Drawer-item--active');
-        this.loadContent(firstItem.element.dataset.contentKey);
+      if (firstAccordion.items.length) { // firstAccordion.containsItems
+        this.activateItem(firstAccordion.items[0].element); 
+        this.loadContent(firstAccordion.items[0].element.dataset.contentKey);
+      } else if (firstAccordion.nestedAccordions.length) { // firstAccordion.containsAccordions
+        this.activateItem(firstAccordion.nestedAccordions[0].items[0].element);
+        this.loadContent(firstAccordion.nestedAccordions[0].items[0].element.dataset.contentKey);
       }
+    }
+
+    clear() {
+      this.inner.innerHTML = '';
     }
   }
 
@@ -282,7 +302,7 @@
       this.appBar.titleText = config.title;
       config.hasOwnProperty('github') && this.appBar.addGithubRedirector(config.github);
       document.title = config.title;
-      this.changeMeta('theme-color', config.themeColor);   
+      this.changeMetaTag('theme-color', config.themeColor);   
       this.injectTabs(config.tabs);
     }
 
@@ -299,12 +319,12 @@
     handleTabPress(index) {
       this.tabs.forEach(tab => tab.deactivate());
       this.tabs[index].activate();
-      let content = this.tabs[index].content;
+      this.drawer.clear();
       this.drawer.populate(this.tabs[index].content);
       this.drawer.activateFirst();
     }
 
-    changeMeta(name, content) {
+    changeMetaTag(name, content) {
       document.querySelector(`meta[name="${name}"]`).setAttribute('content', content);
     }
   }

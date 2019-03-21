@@ -1,6 +1,9 @@
+const availableTags = ['app', 'game', 'program'];
+
+
+
 class Item {
   constructor(item, nestLevel, handleClick) {
-    this.availableTags = ['app', 'game', 'program'];
     this.element = this.build(item, nestLevel, handleClick);
   }
 
@@ -12,7 +15,7 @@ class Item {
     div.innerText = `• ${item.label}`;
     if (item.tags) {
       item.tags.forEach(tagName => {
-        if (this.availableTags.indexOf(tagName) >= 0) {
+        if (availableTags.indexOf(tagName) >= 0) {
           let tag = document.createElement('div');
           tag.classList.add('Tag', `Tag--${tagName}`);
           tag.innerText = tagName;
