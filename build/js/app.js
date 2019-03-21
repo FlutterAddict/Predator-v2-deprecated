@@ -167,6 +167,7 @@
       this.deactivateAllItems();
       this.activateItem(itemElement);
       this.loadContent(itemElement.dataset.contentKey);
+      this.visible = document.body.clientWidth > 920;
     }
 
     deactivateAllItems() {
