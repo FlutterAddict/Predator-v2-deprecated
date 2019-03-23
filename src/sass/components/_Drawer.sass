@@ -10,7 +10,10 @@ $drawerWidth: 300px
   width: $drawerWidth
   height: calc(100% - 50px)
   background: $darker
-  display: block
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  align-items: stretch
   overflow-y: scroll
   overflow-x: hidden
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)
@@ -46,3 +49,7 @@ $drawerWidth: 300px
         color: lighten($darker, 90%)
     +moreThan(920px)
       display: none
+  &-footer
+    text-align: center
+    color: lighten($darker, 30%)
+    padding: 16px 0

@@ -4,21 +4,26 @@
   "themeColor": "#090B10",
   "tabs": {
     "DOCS": {
-      "Home": {
-        "Nested 1": [
-          { "path": "setup/setup", "label": "Setup I" },
-          { "path": "setup/setup2", "label": "Setup II" }
-        ],
-        "Nested 2": [
-          { "path": "setup/setup", "label": "Setup I" },
-          { "path": "setup/setup2", "label": "Setup II" }
-        ]
-      }
+      "Get Started": [
+        { "path": "docs/get-started/setup", "label": "Setup" }
+      ]
     },
     "EXAMPLE": {
-      "Example": [
-        { "path": "example/example", "label": "Example" }
-      ]
+      "Items": [
+        { "path": "items/item-1", "label": "Item 1" },
+        { "path": "items/item-2", "label": "Item 2" },
+        { "path": "items/item-3", "label": "Item 3" }
+      ],
+      "Nested": {
+        "Items A": [
+          { "path": "items/item-1", "label": "Item 1" },
+          { "path": "items/item-2", "label": "Item 2" }
+        ],
+        "Items B": [
+          { "path": "items/item-1", "label": "Item 1" },
+          { "path": "items/item-2", "label": "Item 2" }
+        ]
+      }
     }
   }
 }

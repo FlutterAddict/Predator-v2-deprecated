@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,19 +12,14 @@
     <meta name="theme-color" content="#090B10">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
   </head>
-
   <body>
-
-
-
+    
     <header class="AppBar js-appbar">
-
       <div class="AppBar-part js-appbar-left">
         <ion-icon class="AppBar-logo" name="ios-aperture" size="large"></ion-icon>
         <ion-icon class="AppBar-burger js-burger" name="ios-menu" size="large"></ion-icon>
         <div class="AppBar-title js-appbar-title">Predator</div>
       </div>
-
       <!--
       <div class="AppBar-part">
         <input 
@@ -37,37 +31,30 @@
         />        
       </div>
       -->
-
       <div class="AppBar-part js-appbar-right">
-        <!-- 
-          <div class="AppBar-item js-theme-toggler" tooltip="Toggle Dark Theme" tooltip-position="bottom">
-            <ion-icon name="ios-contrast" size="large"></ion-icon>
-          </div>
-        -->
+      <!-- 
+      <div class="AppBar-item js-theme-toggler" tooltip="Toggle Dark Theme" tooltip-position="bottom">
+        <ion-icon name="ios-contrast" size="large"></ion-icon>
       </div>
-
+      -->
+      </div>
     </header>
-
-
 
     <div class="App">
       <nav class="Drawer js-drawer">
-        <div class="Drawer-tabs js-drawer-tabs"></div>
-        <div class="js-drawer-inner"></div>
+        <div>
+          <div class="Drawer-tabs js-drawer-tabs"></div>
+          <div class="js-drawer-inner"></div>          
+        </div>
+        <div class="Drawer-footer">Powered by Predator</div>
       </nav>
       <main class="Content js-content-parent">
         <div class="Content-wrapper language-dart js-content-container"></div>
       </main>
     </div>
 
-
-
     <script src="build/js/app.js"></script>
     <script src="build/js/libs/prism.min.js"></script>
     <script src="https://unpkg.com/ionicons@4.4.4/dist/ionicons.js"></script>
-
-
-
   </body>
-
 </html>

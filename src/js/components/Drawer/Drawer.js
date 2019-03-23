@@ -13,7 +13,7 @@ class Drawer {
   }
 
   set visible(visibility) {
-    this.outer.style.display = visibility ? 'block' : 'none';
+    this.outer.style.display = visibility ? 'flex' : 'none';
   }  
 
   getDOM() {
