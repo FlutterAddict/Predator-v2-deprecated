@@ -1,5 +1,9 @@
 # Predator
-Documentation website (single page web app) generator.   
+Documentation website (single page web app) generator. 
+
+## Why Deprecated
+I will rewrite Predator so it will render the drawer straight from the `docs/` directory.    
+No need to write paths in `predator.json`. 
 
 ## Features
 - Modern looking
